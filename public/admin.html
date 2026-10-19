@@ -48,8 +48,11 @@ function load(){
   $("cl").innerHTML="";Object.keys(cats).forEach(function(c){var o=document.createElement("option");o.value=c;$("cl").appendChild(o)})})}
 function set(id,s){api("/api/admin/reservations/"+id,{method:"PATCH",body:JSON.stringify({status:s})}).then(load)}
 $("mf").onsubmit=function(e){e.preventDefault();api("/api/admin/menu",{method:"POST",body:JSON.stringify({cat:$("mc").value,name:$("mn").value,desc:$("md").value,tag:$("mt").value})}).then(function(){$("mf").reset();load()})};
-$("lf").onsubmit=function(e){e.preventDefault();$("le").textContent="";
+$("lf").onsubmit=function(e){e.preventDefault();$("le").textContent="Signing in…";
  fetch("/api/admin/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:$("pw").value})})
- .then(function(r){return r.json()}).then(function(j){if(j.token){T=j.token;sessionStorage.setItem("t",T);$("pw").value="";load()}else $("le").textContent=j.error})};
+ .then(function(r){return r.text().then(function(t){var j;try{j=JSON.parse(t)}catch(x){j=null}
+  if(j&&j.token){T=j.token;sessionStorage.setItem("t",T);$("pw").value="";$("le").textContent="";load()}
+  else $("le").textContent=(j&&j.error)||"Server problem (HTTP "+r.status+"). The API is not running correctly. Check the Vercel deployment logs."})})
+ .catch(function(){$("le").textContent="Could not reach the server. Check your internet and try again."})};
 $("out").onclick=logout;if(T)load();
 </script></body></html>
