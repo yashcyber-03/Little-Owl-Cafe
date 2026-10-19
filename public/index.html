@@ -236,7 +236,7 @@ function show(c){
   var p=document.createElement("p");p.textContent=i.desc;
   d.appendChild(h);d.appendChild(p);grid.appendChild(d)});
 }
-fetch("/api/menu").then(function(r){return r.json()}).then(function(items){
+fetch("/api/handler?route=menu").then(function(r){return r.json()}).then(function(items){
  items.forEach(function(i){(DATA[i.cat]=DATA[i.cat]||[]).push(i)});
  var cats=Object.keys(DATA);
  cats.forEach(function(c){var b=document.createElement("button");b.type="button";b.setAttribute("role","tab");b.textContent=c;b.onclick=function(){show(c)};tabs.appendChild(b)});
@@ -252,7 +252,7 @@ document.getElementById("rf").addEventListener("submit",function(e){
  e.preventDefault();er.textContent="";ok.textContent="";
  var body={name:document.getElementById("nm").value,phone:document.getElementById("ph").value,date:dt.value,time:document.getElementById("tm").value,guests:gs.value,note:document.getElementById("nt").value};
  sb.disabled=true;sb.textContent="Sending…";
- fetch("/api/reservations",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)})
+ fetch("/api/handler?route=reservations",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)})
  .then(function(r){return r.json().then(function(j){return{ok:r.ok,j:j}})})
  .then(function(x){
   if(x.ok){ok.textContent="Request received. We’ll confirm your table shortly.";document.getElementById("rf").reset();gs.value=2}
